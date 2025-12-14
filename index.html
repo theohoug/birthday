@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Old Money Masquerade</title>
+    <!-- Si tu trouves ceci, murmure "Les loups sont parmi nous" à Théo pour une surprise... -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Cinzel:wght@400;500;600&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0d0b09;
+            --bg-card: #1a1613;
+            --parchment: #f5efe6;
+            --parchment-dark: #e8dfd2;
+            --burgundy: #722f37;
+            --burgundy-light: #8b3a44;
+            --burgundy-glow: rgba(114, 47, 55, 0.4);
+            --gold: #b8956e;
+            --gold-light: #d4b896;
+            --gold-glow: rgba(184, 149, 110, 0.3);
+            --text-dark: #2d2825;
+            --text-muted: #6b5f58;
+        }
+
+```
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        background: var(--bg-dark);
+        color: var(--parchment);
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* Noise texture overlay */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        opacity: 0.04;
+        pointer-events: none;
+        z-index: 1000;
+    }
+
+    /* Vignette effect */
+    body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(ellipse at center, transparent 0%, transparent 30%, rgba(0,0,0,0.5) 100%);
+        pointer-events: none;
+        z-index: 999;
+    }
+
+    /* ==================== PARTICLES ==================== */
+    .particles-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .particle {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        background: var(--gold);
+        border-radius: 50%;
+        opacity: 0;
+        animation: floatParticle 15s infinite ease-in-out;
+        box-shadow: 0 0 6px var(--gold-glow);
+    }
+
+    @keyframes floatParticle {
+        0% {
+            opacity: 0;
+            transform: translateY(100vh) rotate(0deg);
+        }
+        10% {
+            opacity: 0.6;
+        }
+        90% {
+            opacity: 0.6;
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-100px) rotate(720deg);
+        }
+    }
+
+    /* ==================== CINEMATIC INTRO ==================== */
+    .cinematic-intro {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 100000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 1.5s ease, visibility 1.5s ease;
+    }
+
+    .cinematic-intro.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    /* Beautiful Candle */
+    .candle-wrapper {
+        position: relative;
+        width: 150px;
+        height: 280px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .candle-body {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .candle {
+        position: relative;
+        width: 40px;
+        height: 130px;
+        background: linear-gradient(90deg, 
+            #d4c4a8 0%,
+            #e8d5b7 10%, 
+            #f7f0e3 30%, 
+            #fffef9 50%, 
+            #f7f0e3 70%, 
+            #e8d5b7 90%, 
+            #d4c4a8 100%
+        );
+        border-radius: 6px 6px 4px 4px;
+        box-shadow: 
+            inset 3px 0 8px rgba(255,255,255,0.4),
+            inset -3px 0 8px rgba(0,0,0,0.08),
+            0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    /* Top of candle (melted pool) */
+    .candle::before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 44px;
+        height: 10px;
+        background: linear-gradient(90deg, 
+            #c4b49a 0%, 
+            #e8d5b7 30%,
+            #f0e6d6 50%,
+            #e8d5b7 70%,
+            #c4b49a 100%
+        );
+        border-radius: 50%;
+        box-shadow: inset 0 3px 5px rgba(0,0,0,0.15);
+    }
+
+    /* Melted wax drips */
+    .wax-drip {
+        position: absolute;
+        background: linear-gradient(180deg, #f7f0e3, #e8d5b7);
+        border-radius: 0 0 50% 50%;
+    }
+
+    .wax-drip:nth-child(1) {
+        top: 25px;
+        left: -4px;
+        width: 9px;
+        height: 35px;
+        background: linear-gradient(180deg, #f0e6d6 0%, #e8d5b7 50%, #d4c4a8 100%);
+    }
+
+    .wax-drip:nth-child(2) {
+        top: 45px;
+        right: -3px;
+        width: 7px;
+        height: 25px;
+        background: linear-gradient(180deg, #f0e6d6 0%, #e8d5b7 50%, #d4c4a8 100%);
+    }
+
+    .wax-drip:nth-child(3) {
+        top: 70px;
+        left: -2px;
+        width: 5px;
+        height: 15px;
+        background: linear-gradient(180deg, #f0e6d6 0%, #e8d5b7 100%);
+    }
+
+    /* Wick */
+    .wick {
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2px;
+        height: 14px;
+        background: linear-gradient(to top, #1a1613, #2d2825, #3d3530);
+        border-radius: 1px;
+        z-index: 5;
+    }
+
+    /* Flame - positioned directly on wick */
+    .flame-container {
+        position: absolute;
+        top: -55px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 1s ease;
+        z-index: 10;
+    }
+
+    .flame-container.lit {
+        opacity: 1;
+    }
+
+    /* Main flame */
+    .flame {
+        position: relative;
+        width: 14px;
+        height: 35px;
+        background: linear-gradient(to top, 
+            #ff6b35 0%, 
+            #ff9f43 25%, 
+            #ffd93d 50%,
+            #fffde7 80%,
+            transparent 100%
+        );
+        border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+        animation: flameMain 0.12s infinite alternate ease-in-out;
+        box-shadow: 
+            0 0 15px #ff9f43,
+            0 0 30px #ff6b35,
+            0 0 50px rgba(255, 107, 53, 0.4),
+            0 0 70px rgba(255, 159, 67, 0.2);
+    }
+
+    /* Inner blue core */
+    .flame::before {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 6px;
+        height: 14px;
+        background: linear-gradient(to top, 
+            #29b6f6 0%,
+            #4fc3f7 40%,
+            #fff 80%,
+            transparent 100%
+        );
+        border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+        animation: flameInner 0.08s infinite alternate ease-in-out;
+    }
+
+    /* Flame tip */
+    .flame::after {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 8px;
+        height: 12px;
+        background: linear-gradient(to top, 
+            #ffd93d 0%,
+            #fffde7 60%,
+            transparent 100%
+        );
+        border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+        animation: flameTip 0.18s infinite alternate ease-in-out;
+        opacity: 0.9;
+    }
+
+    @keyframes flameMain {
+        0% { 
+            transform: scaleX(1) scaleY(1) rotate(-1.5deg);
+        }
+        100% { 
+            transform: scaleX(0.92) scaleY(1.05) rotate(1.5deg);
+        }
+    }
+
+    @keyframes flameInner {
+        0% { transform: translateX(-50%) scaleX(1) scaleY(1); }
+        100% { transform: translateX(-50%) scaleX(0.85) scaleY(1.1); }
+    }
+
+    @keyframes flameTip {
+        0% { 
+            transform: translateX(-50%) rotate(-3deg) scaleY(1);
+            opacity: 0.8;
+        }
+        100% { 
+            transform: translateX(-50%) rotate(3deg) scaleY(0.9);
+            opacity: 1;
+        }
+    }
+
+    /* Glow around candle */
+    .candle-glow {
+        position: absolute;
+        top: -80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(ellipse at center, 
+            rgba(255, 159, 67, 0.2) 0%, 
+            rgba(255, 107, 53, 0.1) 25%,
+            rgba(255, 107, 53, 0.05) 40%,
+            transparent 65%
+        );
+        opacity: 0;
+        transition: opacity 1.5s ease;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .candle-glow.lit {
+        opacity: 1;
+        animation: glowPulse 3s infinite ease-in-out;
+    }
+
+    @keyframes glowPulse {
+        0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+        50% { transform: translateX(-50%) scale(1.08); opacity: 0.85; }
+    }
+
+    /* Candle holder */
+    .candle-holder {
+        width: 65px;
+        height: 12px;
+        background: linear-gradient(90deg, 
+            #6b5f58 0%,
+            #8b7355 20%, 
+            #b8956e 35%, 
+            #d4b896 50%, 
+            #b8956e 65%, 
+            #8b7355 80%,
+            #6b5f58 100%
+        );
+        border-radius: 3px;
+        margin-top: -2px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .candle-base {
+        width: 80px;
+        height: 10px;
+        background: linear-gradient(90deg, 
+            #5a4f48 0%, 
+            #6b5f58 20%,
+            #8b7355 40%,
+            #9a8468 50%,
+            #8b7355 60%,
+            #6b5f58 80%,
+            #5a4f48 100%
+        );
+        border-radius: 2px;
+        margin-top: 2px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+    }
+
+    /* SVG Filter for flame */
+    .svg-filters {
+        position: absolute;
+        width: 0;
+        height: 0;
+    }
+
+    .intro-text {
+        margin-top: 50px;
+        font-family: 'Cinzel', serif;
+        font-size: 14px;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        color: var(--gold);
+        opacity: 0;
+        transition: opacity 1s ease;
+        text-align: center;
+        padding: 0 20px;
+    }
+
+    .intro-text.visible {
+        opacity: 1;
+    }
+
+    .intro-text .typewriter {
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: 1px solid var(--gold);
+        animation: blink 0.8s step-end infinite;
+    }
+
+    @keyframes blink {
+        50% { border-color: transparent; }
+    }
+
+    .skip-intro {
+        position: absolute;
+        bottom: 40px;
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 10px 20px;
+    }
+
+    .skip-intro.visible {
+        opacity: 0.5;
+    }
+
+    .skip-intro:hover {
+        opacity: 1;
+    }
+
+    /* ==================== SOUND BUTTON ==================== */
+    .sound-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(26, 22, 19, 0.8);
+        border: 1px solid rgba(184, 149, 110, 0.3);
+        color: var(--gold);
+        cursor: pointer;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.5s ease, transform 0.3s ease, background 0.3s ease;
+    }
+
+    .sound-toggle.visible {
+        opacity: 1;
+    }
+
+    .sound-toggle:hover {
+        background: rgba(26, 22, 19, 1);
+        transform: scale(1.1);
+    }
+
+    .sound-toggle svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .sound-toggle.muted svg .sound-wave {
+        opacity: 0.3;
+    }
+
+    /* ==================== MAIN CONTENT ==================== */
+    .main-content {
+        opacity: 0;
+        transition: opacity 1s ease;
+    }
+
+    .main-content.visible {
+        opacity: 1;
+    }
+
+    /* Hero section */
+    .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 60px 24px;
+        position: relative;
+    }
+
+    .hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(ellipse at 50% 0%, rgba(114, 47, 55, 0.2) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 100%, rgba(184, 149, 110, 0.1) 0%, transparent 40%);
+        z-index: -1;
+    }
+
+    /* Beautiful Venetian Mask Logo */
+    .mask-container {
+        position: relative;
+        width: 140px;
+        height: 90px;
+        margin-bottom: 30px;
+        opacity: 0;
+        animation: fadeIn 1s ease forwards;
+        animation-delay: 0.3s;
+    }
+
+    .venetian-mask {
+        width: 100%;
+        height: 100%;
+        transition: transform 0.15s ease-out;
+        filter: drop-shadow(0 5px 20px rgba(184, 149, 110, 0.3));
+    }
+
+    /* Decorative elements */
+    .ornament {
+        width: 200px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        margin: 20px auto;
+        position: relative;
+        opacity: 0;
+        animation: fadeIn 1s ease forwards;
+        animation-delay: 0.5s;
+    }
+
+    .ornament::before {
+        content: '◆';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: var(--gold);
+        font-size: 10px;
+        background: var(--bg-dark);
+        padding: 0 10px;
+    }
+
+    .date-badge {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 30px;
+        opacity: 0;
+        animation: fadeSlideDown 1s ease forwards;
+        animation-delay: 0.3s;
+    }
+
+    .main-title {
+        font-family: 'Cinzel Decorative', serif;
+        font-size: clamp(26px, 7vw, 44px);
+        font-weight: 400;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        line-height: 1.3;
+        margin-bottom: 10px;
+        opacity: 0;
+        animation: fadeSlideUp 1.2s ease forwards;
+        animation-delay: 0.6s;
+    }
+
+    .main-title span {
+        display: block;
+        color: var(--gold);
+        font-family: 'Cinzel', serif;
+        font-size: clamp(32px, 9vw, 52px);
+        margin-top: 5px;
+    }
+
+    .subtitle {
+        font-size: 18px;
+        font-style: italic;
+        color: var(--parchment-dark);
+        opacity: 0.8;
+        margin-top: 20px;
+        opacity: 0;
+        animation: fadeIn 1s ease forwards;
+        animation-delay: 1s;
+    }
+
+    /* Countdown */
+    .countdown-section {
+        margin-top: 50px;
+        opacity: 0;
+        animation: fadeIn 1s ease forwards;
+        animation-delay: 1.2s;
+    }
+
+    .countdown-label {
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 15px;
+        transition: color 0.5s ease;
+    }
+
+    .countdown-label.urgent {
+        color: var(--burgundy-light);
+    }
+
+    .countdown {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .countdown-item {
+        text-align: center;
+        min-width: 55px;
+    }
+
+    .countdown-number {
+        font-family: 'Cinzel', serif;
+        font-size: 32px;
+        font-weight: 500;
+        color: var(--parchment);
+        line-height: 1;
+        transition: color 0.5s ease, text-shadow 0.5s ease;
+    }
+
+    .countdown-number.urgent {
+        color: var(--burgundy-light);
+        text-shadow: 0 0 20px var(--burgundy-glow);
+    }
+
+    .countdown-unit {
+        font-size: 9px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-top: 5px;
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        animation: fadeIn 1s ease forwards;
+        animation-delay: 2s;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .scroll-text {
+        font-family: 'Cinzel', serif;
+        font-size: 9px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 10px;
+    }
+
+    .scroll-arrow {
+        animation: bounce 2s ease-in-out infinite;
+        color: var(--gold);
+    }
+
+    .scroll-arrow svg {
+        opacity: 0.7;
+        width: 20px;
+        height: 20px;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(8px); }
+    }
+
+    /* ==================== INFO SECTION ==================== */
+    .info-section {
+        padding: 80px 24px;
+        background: linear-gradient(to bottom, transparent, rgba(26, 22, 19, 0.5), transparent);
+    }
+
+    .info-card {
+        background: linear-gradient(135deg, rgba(26, 22, 19, 0.95), rgba(13, 11, 9, 0.98));
+        border: 1px solid rgba(184, 149, 110, 0.2);
+        border-radius: 2px;
+        padding: 40px 25px;
+        max-width: 400px;
+        margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .info-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .info-title {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 25px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid rgba(184, 149, 110, 0.1);
+    }
+
+    .info-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .info-icon {
+        width: 22px;
+        height: 22px;
+        margin-right: 15px;
+        opacity: 0.7;
+        flex-shrink: 0;
+        color: var(--gold);
+    }
+
+    .info-content h3 {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--parchment);
+        margin-bottom: 5px;
+    }
+
+    .info-content p {
+        font-size: 15px;
+        color: var(--parchment-dark);
+        line-height: 1.6;
+    }
+
+    /* ==================== GUESTS SECTION ==================== */
+    .guests-section {
+        padding: 80px 24px;
+    }
+
+    .guests-title {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--gold);
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .guests-subtitle {
+        font-size: 14px;
+        font-style: italic;
+        color: var(--text-muted);
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .guests-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .guest-silhouette {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        opacity: 0.7;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .guest-silhouette:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    /* Mini elegant mask for guests */
+    .guest-mask-icon {
+        width: 45px;
+        height: 28px;
+        opacity: 0.8;
+    }
+
+    .guest-initial {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        color: var(--gold);
+        margin-top: 8px;
+        letter-spacing: 1px;
+    }
+
+    /* ==================== SECRETS SECTION ==================== */
+    .secrets-section {
+        padding: 80px 24px;
+        background: linear-gradient(to bottom, transparent, rgba(114, 47, 55, 0.05), transparent);
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 18px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--parchment);
+        margin-bottom: 10px;
+    }
+
+    .section-subtitle {
+        font-size: 14px;
+        font-style: italic;
+        color: var(--text-muted);
+    }
+
+    .secrets-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .secret-card {
+        background: rgba(26, 22, 19, 0.6);
+        border: 1px solid rgba(184, 149, 110, 0.15);
+        border-radius: 2px;
+        padding: 25px;
+        position: relative;
+        transition: all 0.5s ease;
+        overflow: hidden;
+    }
+
+    .secret-card.locked {
+        cursor: pointer;
+    }
+
+    .secret-card.locked .secret-content {
+        filter: blur(5px);
+        user-select: none;
+    }
+
+    /* Seal for locked cards - Elegant wax seal */
+    .seal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70px;
+        height: 70px;
+        opacity: 0.95;
+        transition: all 0.5s ease;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+    }
+
+    .seal-outer {
+        fill: #5a2a2a;
+    }
+
+    .seal-middle {
+        fill: #722f37;
+    }
+
+    .seal-inner {
+        fill: #8b3a44;
+    }
+
+    .seal-center {
+        fill: #9d4a52;
+    }
+
+    .seal-text {
+        fill: var(--parchment);
+        font-family: 'Cinzel', serif;
+        font-size: 7px;
+        letter-spacing: 1px;
+        text-anchor: middle;
+    }
+
+    .seal-decoration {
+        fill: none;
+        stroke: #4a1a1a;
+        stroke-width: 0.5;
+        opacity: 0.5;
+    }
+
+    .secret-card.unlocking .seal {
+        animation: breakSeal 0.8s ease forwards;
+    }
+
+    @keyframes breakSeal {
+        0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+        50% { transform: translate(-50%, -50%) scale(1.2) rotate(10deg); opacity: 0.8; }
+        100% { transform: translate(-50%, -50%) scale(0) rotate(180deg); opacity: 0; }
+    }
+
+    .secret-card.unlocked {
+        border-color: rgba(184, 149, 110, 0.4);
+    }
+
+    .secret-card.unlocked .seal {
+        display: none;
+    }
+
+    .secret-number {
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 10px;
+    }
+
+    .secret-content {
+        font-size: 15px;
+        color: var(--parchment-dark);
+        line-height: 1.7;
+        font-style: italic;
+        transition: filter 0.5s ease;
+    }
+
+    .secret-card.unlocked .secret-number {
+        color: var(--gold-light);
+    }
+
+    /* ==================== DRESS CODE SECTION ==================== */
+    .dresscode-section {
+        padding: 80px 24px;
+    }
+
+    .dresscode-card {
+        background: linear-gradient(135deg, rgba(114, 47, 55, 0.15), rgba(13, 11, 9, 0.95));
+        border: 1px solid rgba(114, 47, 55, 0.3);
+        border-radius: 2px;
+        padding: 40px 25px;
+        max-width: 400px;
+        margin: 0 auto;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dresscode-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(ellipse at center, 
+            rgba(114, 47, 55, 0.1) 0%, 
+            transparent 70%
+        );
+        animation: rotateBg 20s linear infinite;
+    }
+
+    @keyframes rotateBg {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .dresscode-title {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--burgundy-light);
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .dresscode-main {
+        font-family: 'Cinzel Decorative', serif;
+        font-size: 22px;
+        letter-spacing: 2px;
+        color: var(--parchment);
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .dresscode-details {
+        font-size: 14px;
+        color: var(--parchment-dark);
+        line-height: 1.9;
+        font-style: italic;
+        position: relative;
+    }
+
+    .dresscode-details strong {
+        color: var(--gold);
+        font-style: normal;
+    }
+
+    /* ==================== FOOTER ==================== */
+    .footer {
+        padding: 60px 24px;
+        text-align: center;
+    }
+
+    .footer-ornament {
+        width: 100px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        margin: 0 auto 30px;
+    }
+
+    .footer-text {
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+    }
+
+    .footer-host {
+        margin-top: 15px;
+        font-size: 14px;
+        font-style: italic;
+        color: var(--gold);
+    }
+
+    /* ==================== ANIMATIONS ==================== */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeSlideUp {
+        from { 
+            opacity: 0; 
+            transform: translateY(30px);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeSlideDown {
+        from { 
+            opacity: 0; 
+            transform: translateY(-20px);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0);
+        }
+    }
+
+    /* Scroll animations */
+    .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Secret toast notification */
+    .secret-toast {
+        position: fixed;
+        bottom: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--bg-card);
+        border: 1px solid var(--gold);
+        padding: 15px 25px;
+        border-radius: 2px;
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: var(--gold);
+        z-index: 10001;
+        transition: bottom 0.5s ease;
+        text-align: center;
+        box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    }
+
+    .secret-toast.visible {
+        bottom: 30px;
+    }
+
+    /* ==================== URGENT MODE (< 7 days) ==================== */
+    body.urgent-mode {
+        --burgundy-glow: rgba(114, 47, 55, 0.6);
+    }
+
+    body.urgent-mode .hero-bg {
+        background: 
+            radial-gradient(ellipse at 50% 0%, rgba(114, 47, 55, 0.3) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 100%, rgba(184, 149, 110, 0.15) 0%, transparent 40%);
+    }
+
+    /* ==================== FINAL COUNTDOWN (< 24h) ==================== */
+    body.final-countdown .hero-bg {
+        animation: pulseBackground 3s ease-in-out infinite;
+    }
+
+    @keyframes pulseBackground {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    body.final-countdown .countdown-number {
+        animation: pulseText 1s ease-in-out infinite;
+    }
+
+    @keyframes pulseText {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+</style>
+```
+
+</head>
+<body>
+    <!-- SVG Filters -->
+    <svg class="svg-filters">
+        <defs>
+            <filter id="flame-blur">
+                <feGaussianBlur stdDeviation="0.5" />
+            </filter>
+        </defs>
+    </svg>
+
+```
+<!-- Particles -->
+<div class="particles-container" id="particles"></div>
+
+<!-- Sound Toggle -->
+<button class="sound-toggle muted" id="soundToggle" aria-label="Toggle sound">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+        <path class="sound-wave" d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        <path class="sound-wave" d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    </svg>
+</button>
+
+<!-- Cinematic Intro -->
+<div class="cinematic-intro" id="intro">
+    <div class="candle-wrapper">
+        <div class="candle-glow" id="candleGlow"></div>
+        <div class="candle-body">
+            <div class="candle">
+                <div class="flame-container" id="flame">
+                    <div class="flame"></div>
+                </div>
+                <div class="wick"></div>
+                <div class="wax-drip"></div>
+                <div class="wax-drip"></div>
+                <div class="wax-drip"></div>
+            </div>
+        </div>
+        <div class="candle-holder"></div>
+        <div class="candle-base"></div>
+    </div>
+    <div class="intro-text" id="introText">
+        <span class="typewriter" id="typewriter"></span>
+    </div>
+    <button class="skip-intro" id="skipIntro">Passer</button>
+</div>
+
+<!-- Main Content -->
+<div class="main-content" id="mainContent">
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        
+        <!-- Beautiful Venetian Mask SVG -->
+        <div class="mask-container">
+            <svg class="venetian-mask" id="interactiveMask" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="maskGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#d4b896"/>
+                        <stop offset="25%" style="stop-color:#b8956e"/>
+                        <stop offset="50%" style="stop-color:#d4b896"/>
+                        <stop offset="75%" style="stop-color:#8b7355"/>
+                        <stop offset="100%" style="stop-color:#b8956e"/>
+                    </linearGradient>
+                    <linearGradient id="maskShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#b8956e"/>
+                        <stop offset="100%" style="stop-color:#6b5f58"/>
+                    </linearGradient>
+                    <filter id="maskGlow">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                
+                <!-- Main mask shape -->
+                <path fill="url(#maskGold)" d="
+                    M100 15
+                    C60 15 25 35 10 60
+                    C8 63 8 67 10 70
+                    C25 95 60 105 100 105
+                    C140 105 175 95 190 70
+                    C192 67 192 63 190 60
+                    C175 35 140 15 100 15
+                    Z
+                "/>
+                
+                <!-- Left eye hole -->
+                <ellipse cx="60" cy="55" rx="22" ry="16" fill="#0d0b09"/>
+                <ellipse cx="60" cy="55" rx="20" ry="14" fill="none" stroke="url(#maskShadow)" stroke-width="2"/>
+                
+                <!-- Right eye hole -->
+                <ellipse cx="140" cy="55" rx="22" ry="16" fill="#0d0b09"/>
+                <ellipse cx="140" cy="55" rx="20" ry="14" fill="none" stroke="url(#maskShadow)" stroke-width="2"/>
+                
+                <!-- Nose bridge -->
+                <path fill="url(#maskShadow)" d="M95 50 L100 75 L105 50 Q100 45 95 50" opacity="0.5"/>
+                
+                <!-- Decorative top flourish -->
+                <path fill="none" stroke="#d4b896" stroke-width="1.5" d="
+                    M100 18
+                    C100 10 110 5 115 12
+                    M100 18
+                    C100 10 90 5 85 12
+                " opacity="0.8"/>
+                
+                <!-- Side decorations left -->
+                <circle cx="25" cy="60" r="4" fill="#d4b896" opacity="0.7"/>
+                <circle cx="18" cy="55" r="2.5" fill="#d4b896" opacity="0.5"/>
+                <circle cx="15" cy="65" r="2" fill="#d4b896" opacity="0.4"/>
+                
+                <!-- Side decorations right -->
+                <circle cx="175" cy="60" r="4" fill="#d4b896" opacity="0.7"/>
+                <circle cx="182" cy="55" r="2.5" fill="#d4b896" opacity="0.5"/>
+                <circle cx="185" cy="65" r="2" fill="#d4b896" opacity="0.4"/>
+                
+                <!-- Eyebrow decorations -->
+                <path fill="none" stroke="#8b7355" stroke-width="1" d="M40 42 Q60 35 80 42" opacity="0.6"/>
+                <path fill="none" stroke="#8b7355" stroke-width="1" d="M120 42 Q140 35 160 42" opacity="0.6"/>
+                
+                <!-- Subtle pattern lines -->
+                <path fill="none" stroke="#d4b896" stroke-width="0.5" d="M30 70 Q50 80 70 70" opacity="0.3"/>
+                <path fill="none" stroke="#d4b896" stroke-width="0.5" d="M130 70 Q150 80 170 70" opacity="0.3"/>
+                
+                <!-- Bottom edge detail -->
+                <path fill="none" stroke="url(#maskShadow)" stroke-width="1" d="
+                    M40 90 Q70 100 100 95 Q130 100 160 90
+                " opacity="0.5"/>
+            </svg>
+        </div>
+
+        <div class="date-badge">25 Janvier 2026</div>
+        
+        <h1 class="main-title">
+            Old Money
+            <span>Masquerade</span>
+        </h1>
+        
+        <div class="ornament"></div>
+        
+        <p class="subtitle">Une soirée d'élégance et de mystère</p>
+        
+        <div class="countdown-section">
+            <div class="countdown-label" id="countdownLabel">Le bal commence dans</div>
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">--</div>
+                    <div class="countdown-unit">Jours</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">--</div>
+                    <div class="countdown-unit">Heures</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">--</div>
+                    <div class="countdown-unit">Min</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">--</div>
+                    <div class="countdown-unit">Sec</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator" id="scrollIndicator">
+            <div class="scroll-text">Découvrir plus</div>
+            <div class="scroll-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="info-section" id="infoSection">
+        <div class="info-card reveal">
+            <div class="info-title">Les Détails</div>
+            
+            <div class="info-item">
+                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <div class="info-content">
+                    <h3>Date</h3>
+                    <p>Dimanche 25 Janvier 2026</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <div class="info-content">
+                    <h3>Heure</h3>
+                    <p>19h00 — jusqu'au bout de la nuit</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <div class="info-content">
+                    <h3>Lieu</h3>
+                    <p>Le restaurant — Périers</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                    <line x1="6" y1="1" x2="6" y2="4"></line>
+                    <line x1="10" y1="1" x2="10" y2="4"></line>
+                    <line x1="14" y1="1" x2="14" y2="4"></line>
+                </svg>
+                <div class="info-content">
+                    <h3>Ce qui est prévu</h3>
+                    <p>Alcool, nourriture & surprises mystérieuses...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guests Section -->
+    <section class="guests-section">
+        <div class="reveal">
+            <h2 class="guests-title">Les Convives</h2>
+            <p class="guests-subtitle">Qui se cache derrière le masque ?</p>
+        </div>
+        
+        <div class="guests-grid reveal" id="guestsGrid">
+            <!-- Generated by JS -->
+        </div>
+    </section>
+
+    <!-- Secrets Section -->
+    <section class="secrets-section">
+        <div class="section-header reveal">
+            <h2 class="section-title">Les Indices</h2>
+            <p class="section-subtitle">Revenez régulièrement découvrir les secrets...</p>
+        </div>
+        
+        <div class="secrets-grid">
+            <div class="secret-card unlocked reveal" id="secret1">
+                <div class="secret-number">Indice I — Révélé</div>
+                <div class="secret-content">
+                    "Durant la nuit, parmi les convives masqués, certains ne sont pas ce qu'ils prétendent être. Les Loups rôdent..."
+                </div>
+            </div>
+            
+            <div class="secret-card locked reveal" id="secret2" data-secret="Bien essayé... mais les curieux seront punis le soir du bal. 🎭">
+                <svg class="seal" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Outer irregular wax edge -->
+                    <path class="seal-outer" d="M35 2 C42 3 48 5 53 8 C56 10 60 14 63 20 C66 26 68 32 67 38 C68 44 66 50 62 55 C58 60 52 64 46 66 C40 68 34 68 28 66 C22 64 16 60 12 55 C8 50 5 44 4 38 C3 32 4 26 7 20 C10 14 14 10 18 7 C24 4 28 2 35 2"/>
+                    <!-- Middle ring -->
+                    <circle class="seal-middle" cx="35" cy="35" r="26"/>
+                    <!-- Inner ring -->
+                    <circle class="seal-inner" cx="35" cy="35" r="19"/>
+                    <!-- Center -->
+                    <circle class="seal-center" cx="35" cy="35" r="12"/>
+                    <!-- Decorative lines -->
+                    <path class="seal-decoration" d="M35 13 L35 17 M35 53 L35 57 M13 35 L17 35 M53 35 L57 35"/>
+                    <path class="seal-decoration" d="M20 20 L23 23 M47 47 L50 50 M20 50 L23 47 M47 23 L50 20"/>
+                    <!-- Mask icon in center -->
+                    <path fill="var(--parchment)" d="M35 28 C30 28 26 31 24 34 C26 37 30 40 35 40 C40 40 44 37 46 34 C44 31 40 28 35 28 Z M31 33.5 C31 32.5 32 31.5 33 31.5 C34 31.5 35 32.5 35 33.5 C35 34.5 34 35 33 35 C32 35 31 34.5 31 33.5 Z M37 33.5 C37 32.5 38 31.5 39 31.5 C40 31.5 41 32.5 41 33.5 C41 34.5 40 35 39 35 C38 35 37 34.5 37 33.5 Z" opacity="0.9" transform="scale(0.85) translate(6, 6)"/>
+                    <!-- Text around -->
+                    <text class="seal-text" x="35" y="60">SCELLÉ</text>
+                </svg>
+                <div class="secret-number">Indice II — Scellé</div>
+                <div class="secret-content">
+                    Ce secret sera révélé en temps voulu...
+                </div>
+            </div>
+            
+            <div class="secret-card locked reveal" id="secret3" data-secret="Tu croyais vraiment trouver la réponse ici ? Théo te surveille... 👁️">
+                <svg class="seal" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Outer irregular wax edge -->
+                    <path class="seal-outer" d="M35 2 C42 3 48 5 53 8 C56 10 60 14 63 20 C66 26 68 32 67 38 C68 44 66 50 62 55 C58 60 52 64 46 66 C40 68 34 68 28 66 C22 64 16 60 12 55 C8 50 5 44 4 38 C3 32 4 26 7 20 C10 14 14 10 18 7 C24 4 28 2 35 2"/>
+                    <!-- Middle ring -->
+                    <circle class="seal-middle" cx="35" cy="35" r="26"/>
+                    <!-- Inner ring -->
+                    <circle class="seal-inner" cx="35" cy="35" r="19"/>
+                    <!-- Center -->
+                    <circle class="seal-center" cx="35" cy="35" r="12"/>
+                    <!-- Decorative lines -->
+                    <path class="seal-decoration" d="M35 13 L35 17 M35 53 L35 57 M13 35 L17 35 M53 35 L57 35"/>
+                    <path class="seal-decoration" d="M20 20 L23 23 M47 47 L50 50 M20 50 L23 47 M47 23 L50 20"/>
+                    <!-- Mask icon in center -->
+                    <path fill="var(--parchment)" d="M35 28 C30 28 26 31 24 34 C26 37 30 40 35 40 C40 40 44 37 46 34 C44 31 40 28 35 28 Z M31 33.5 C31 32.5 32 31.5 33 31.5 C34 31.5 35 32.5 35 33.5 C35 34.5 34 35 33 35 C32 35 31 34.5 31 33.5 Z M37 33.5 C37 32.5 38 31.5 39 31.5 C40 31.5 41 32.5 41 33.5 C41 34.5 40 35 39 35 C38 35 37 34.5 37 33.5 Z" opacity="0.9" transform="scale(0.85) translate(6, 6)"/>
+                    <!-- Text around -->
+                    <text class="seal-text" x="35" y="60">SCELLÉ</text>
+                </svg>
+                <div class="secret-number">Indice III — Scellé</div>
+                <div class="secret-content">
+                    Ce secret sera révélé en temps voulu...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dress Code Section -->
+    <section class="dresscode-section">
+        <div class="dresscode-card reveal">
+            <div class="dresscode-title">Dress Code</div>
+            <div class="dresscode-main">Élégance & Masque</div>
+            <div class="dresscode-details">
+                Tenue chic exigée.<br>
+                <strong>Masque obligatoire.</strong><br><br>
+                Tons recommandés :<br>
+                noir, marron, beige.<br><br>
+                <em>Old money, pas new money.</em><br>
+                <em>Sobriété, pas ostentation.</em>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-ornament"></div>
+        <div class="footer-text">Une invitation privée</div>
+        <div class="footer-host">— Théo —</div>
+    </footer>
+</div>
+
+<!-- Secret Toast -->
+<div class="secret-toast" id="secretToast"></div>
+
+<script>
+    // ==================== PARTICLES ====================
+    function createParticles() {
+        const container = document.getElementById('particles');
+        const particleCount = 30;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+            particle.style.width = (2 + Math.random() * 3) + 'px';
+            particle.style.height = particle.style.width;
+            container.appendChild(particle);
+        }
+    }
+    createParticles();
+
+    // ==================== CINEMATIC INTRO ====================
+    const introText = "Vous êtes convié...";
+    let charIndex = 0;
+    let introComplete = false;
+
+    function typeWriter() {
+        const typewriterEl = document.getElementById('typewriter');
+        if (charIndex < introText.length) {
+            typewriterEl.textContent += introText.charAt(charIndex);
+            charIndex++;
+            setTimeout(typeWriter, 120);
+        } else {
+            setTimeout(() => {
+                introComplete = true;
+                skipIntro();
+            }, 2500);
+        }
+    }
+
+    function startIntro() {
+        // Light the candle after 1.2s
+        setTimeout(() => {
+            document.getElementById('flame').classList.add('lit');
+            document.getElementById('candleGlow').classList.add('lit');
+        }, 1200);
+        
+        // Show text after 3s
+        setTimeout(() => {
+            document.getElementById('introText').classList.add('visible');
+            typeWriter();
+        }, 3000);
+        
+        // Show skip button after 2s
+        setTimeout(() => {
+            document.getElementById('skipIntro').classList.add('visible');
+        }, 2000);
+    }
+
+    function skipIntro() {
+        document.getElementById('intro').classList.add('hidden');
+        document.getElementById('mainContent').classList.add('visible');
+        document.getElementById('soundToggle').classList.add('visible');
+    }
+
+    document.getElementById('skipIntro').addEventListener('click', skipIntro);
+    startIntro();
+
+    // ==================== SOUND ====================
+    const soundToggle = document.getElementById('soundToggle');
+    let audioContext;
+    let noiseNode;
+    let soundEnabled = false;
+
+    function initAudio() {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        const bufferSize = 2 * audioContext.sampleRate;
+        const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        
+        let lastOut = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+            const white = Math.random() * 2 - 1;
+            output[i] = (lastOut + (0.02 * white)) / 1.02;
+            lastOut = output[i];
+            output[i] *= 0.5;
+        }
+        
+        noiseNode = audioContext.createBufferSource();
+        noiseNode.buffer = noiseBuffer;
+        noiseNode.loop = true;
+        
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0.04;
+        
+        const filterNode = audioContext.createBiquadFilter();
+        filterNode.type = 'lowpass';
+        filterNode.frequency.value = 400;
+        
+        noiseNode.connect(filterNode);
+        filterNode.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+    }
+
+    soundToggle.addEventListener('click', () => {
+        if (!audioContext) {
+            initAudio();
+        }
+        
+        soundEnabled = !soundEnabled;
+        soundToggle.classList.toggle('muted', !soundEnabled);
+        
+        if (soundEnabled) {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            noiseNode.start(0);
+        } else {
+            noiseNode.stop();
+            // Recreate for next play
+            noiseNode = audioContext.createBufferSource();
+            const bufferSize = 2 * audioContext.sampleRate;
+            const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            let lastOut = 0.0;
+            for (let i = 0; i < bufferSize; i++) {
+                const white = Math.random() * 2 - 1;
+                output[i] = (lastOut + (0.02 * white)) / 1.02;
+                lastOut = output[i];
+                output[i] *= 0.5;
+            }
+            noiseNode.buffer = noiseBuffer;
+            noiseNode.loop = true;
+            const gainNode = audioContext.createGain();
+            gainNode.gain.value = 0.04;
+            const filterNode = audioContext.createBiquadFilter();
+            filterNode.type = 'lowpass';
+            filterNode.frequency.value = 400;
+            noiseNode.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+        }
+    });
+
+    // ==================== COUNTDOWN ====================
+    function updateCountdown() {
+        const eventDate = new Date('2026-01-25T19:00:00').getTime();
+        const now = new Date().getTime();
+        const distance = eventDate - now;
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (distance > 0) {
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+            if (days < 7) {
+                document.body.classList.add('urgent-mode');
+                document.getElementById('countdownLabel').textContent = 'Le bal approche...';
+                document.getElementById('countdownLabel').classList.add('urgent');
+                document.querySelectorAll('.countdown-number').forEach(el => el.classList.add('urgent'));
+            }
+            
+            if (days === 0) {
+                document.body.classList.add('final-countdown');
+                document.getElementById('countdownLabel').textContent = 'Cette nuit...';
+            }
+        } else {
+            document.getElementById('days').textContent = '00';
+            document.getElementById('hours').textContent = '00';
+            document.getElementById('minutes').textContent = '00';
+            document.getElementById('seconds').textContent = '00';
+            document.getElementById('countdownLabel').textContent = 'Le bal a commencé';
+        }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // ==================== INTERACTIVE MASK ====================
+    const mask = document.getElementById('interactiveMask');
+    
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', (e) => {
+            const tiltX = Math.max(-15, Math.min(15, e.gamma || 0)) / 15;
+            const tiltY = Math.max(-15, Math.min(15, e.beta - 45 || 0)) / 15;
+            mask.style.transform = `perspective(200px) rotateY(${tiltX * 8}deg) rotateX(${-tiltY * 8}deg)`;
+        });
+    }
+    
+    document.addEventListener('mousemove', (e) => {
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        const tiltX = (e.clientX - centerX) / centerX;
+        const tiltY = (e.clientY - centerY) / centerY;
+        mask.style.transform = `perspective(200px) rotateY(${tiltX * 6}deg) rotateX(${-tiltY * 6}deg)`;
+    });
+
+    // ==================== GUESTS GRID ====================
+    // PLACEHOLDER - Tu me donneras la vraie liste
+    const guests = [
+        { initials: '?', name: '?' },
+        { initials: '?', name: '?' },
+        { initials: '?', name: '?' },
+        { initials: '?', name: '?' },
+        { initials: '?', name: '?' },
+        { initials: '?', name: '?' },
+    ];
+    
+    const guestsGrid = document.getElementById('guestsGrid');
+    
+    guests.forEach(guest => {
+        const guestEl = document.createElement('div');
+        guestEl.className = 'guest-silhouette';
+        guestEl.innerHTML = `
+            <svg class="guest-mask-icon" viewBox="0 0 60 36" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="miniMask" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#d4b896"/>
+                        <stop offset="50%" style="stop-color:#b8956e"/>
+                        <stop offset="100%" style="stop-color:#8b7355"/>
+                    </linearGradient>
+                </defs>
+                <path fill="url(#miniMask)" d="M30 3 C15 3 5 12 2 20 C5 28 15 33 30 33 C45 33 55 28 58 20 C55 12 45 3 30 3 Z"/>
+                <ellipse cx="18" cy="17" rx="7" ry="5" fill="#0d0b09"/>
+                <ellipse cx="42" cy="17" rx="7" ry="5" fill="#0d0b09"/>
+                <circle cx="5" cy="18" r="2" fill="#d4b896" opacity="0.6"/>
+                <circle cx="55" cy="18" r="2" fill="#d4b896" opacity="0.6"/>
+            </svg>
+            <div class="guest-initial">${guest.initials}</div>
+        `;
+        guestsGrid.appendChild(guestEl);
+    });
+
+    // ==================== SCROLL REVEAL ====================
+    const revealElements = document.querySelectorAll('.reveal');
+    
+    const revealOnScroll = () => {
+        revealElements.forEach(el => {
+            const elementTop = el.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+            
+            if (elementTop < windowHeight - 80) {
+                el.classList.add('visible');
+            }
+        });
+    };
+
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll();
+
+    document.getElementById('scrollIndicator').addEventListener('click', () => {
+        document.getElementById('infoSection').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ==================== EASTER EGGS ====================
+    let lastTap = 0;
+    document.addEventListener('touchend', (e) => {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 300 && tapLength > 0) {
+            showSecretToast("🎭 Les apparences sont trompeuses...");
+        }
+        lastTap = currentTime;
+    });
+
+    let shakeThreshold = 15;
+    let lastX, lastY, lastZ;
+    
+    window.addEventListener('devicemotion', (e) => {
+        const acceleration = e.accelerationIncludingGravity;
+        if (acceleration && lastX !== undefined) {
+            const deltaX = Math.abs(lastX - acceleration.x);
+            const deltaY = Math.abs(lastY - acceleration.y);
+            const deltaZ = Math.abs(lastZ - acceleration.z);
+            
+            if ((deltaX > shakeThreshold && deltaY > shakeThreshold) || 
+                (deltaX > shakeThreshold && deltaZ > shakeThreshold) || 
+                (deltaY > shakeThreshold && deltaZ > shakeThreshold)) {
+                showSecretToast("🐺 Les loups s'éveillent à minuit...");
+            }
+        }
+        if (acceleration) {
+            lastX = acceleration.x;
+            lastY = acceleration.y;
+            lastZ = acceleration.z;
+        }
+    });
+
+    let konamiCode = [];
+    const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+    
+    document.addEventListener('keydown', (e) => {
+        konamiCode.push(e.keyCode);
+        konamiCode = konamiCode.slice(-10);
+        
+        if (konamiCode.toString() === konamiSequence.toString()) {
+            unlockSecret('secret2');
+        }
+    });
+
+    function showSecretToast(message) {
+        const toast = document.getElementById('secretToast');
+        toast.textContent = message;
+        toast.classList.add('visible');
+        
+        setTimeout(() => {
+            toast.classList.remove('visible');
+        }, 3000);
+    }
+
+    function unlockSecret(secretId) {
+        const card = document.getElementById(secretId);
+        if (card && card.classList.contains('locked')) {
+            card.classList.add('unlocking');
+            
+            setTimeout(() => {
+                card.classList.remove('locked', 'unlocking');
+                card.classList.add('unlocked');
+                
+                const secretText = card.getAttribute('data-secret');
+                card.querySelector('.secret-content').textContent = secretText;
+                card.querySelector('.secret-number').textContent = card.querySelector('.secret-number').textContent.replace('Scellé', 'Révélé');
+                
+                showSecretToast("✨ Un secret a été révélé !");
+            }, 800);
+        }
+    }
+
+    document.querySelectorAll('.secret-card.locked').forEach(card => {
+        card.addEventListener('click', () => {
+            showSecretToast("🔒 Ce secret n'est pas encore prêt...");
+        });
+    });
+
+    // ==================== PARALLAX ====================
+    const heroBg = document.querySelector('.hero-bg');
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        heroBg.style.transform = `translateY(${scrolled * 0.4}px)`;
+    });
+</script>
+```
+
+</body>
+</html>
