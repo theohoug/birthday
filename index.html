@@ -57,18 +57,24 @@
         align-items: center;
         justify-content: center;
         padding: 40px 20px;
+        width: 100%;
     }
 
     /* Header */
     .header {
         text-align: center;
         margin-bottom: 40px;
+        width: 100%;
     }
 
     .header-ornament {
-        font-size: 2rem;
-        color: var(--gold);
         margin-bottom: 15px;
+    }
+
+    .header-ornament svg {
+        width: 50px;
+        height: 35px;
+        fill: var(--gold);
     }
 
     .header-title {
@@ -102,6 +108,7 @@
         justify-content: center;
         gap: 15px;
         margin: 25px 0;
+        width: 100%;
     }
 
     .divider-line {
@@ -148,6 +155,7 @@
 
     .form-group {
         margin-bottom: 18px;
+        width: 100%;
     }
 
     .form-label {
@@ -432,9 +440,13 @@
     }
 
     .card-header-ornament {
-        font-size: 1.6rem;
-        color: var(--gold);
         margin-bottom: 8px;
+    }
+
+    .card-header-ornament svg {
+        width: 40px;
+        height: 28px;
+        fill: var(--gold);
     }
 
     .card-event-title {
@@ -584,24 +596,40 @@
 
 </head>
 <body>
-    <!-- MAIN CONTENT -->
-    <main class="main-content" id="mainContent">
-        <header class="header">
-            <div class="header-ornament">🜲</div>
-            <h1 class="header-title">Old Money Masquerade</h1>
-            <p class="header-subtitle">L'Appel des Élus</p>
-            <p class="header-date">25 Janvier 2026 • 19h00</p>
-        </header>
+    <!-- Hidden form for Netlify detection -->
+    <form name="rsvp" netlify netlify-honeypot="bot-field" hidden>
+        <input type="text" name="prenom">
+        <input type="text" name="nom">
+        <input type="text" name="civilite">
+        <input type="text" name="cocktails">
+        <input type="text" name="vin">
+        <input type="text" name="alcool">
+    </form>
 
 ```
+<!-- MAIN CONTENT -->
+<main class="main-content" id="mainContent">
+    <header class="header">
+        <div class="header-ornament">
+            <svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 5 L65 30 L95 30 L72 48 L80 75 L50 58 L20 75 L28 48 L5 30 L35 30 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M50 20 L58 35 L75 35 L62 45 L67 62 L50 52 L33 62 L38 45 L25 35 L42 35 Z"/>
+            </svg>
+        </div>
+        <h1 class="header-title">Old Money Masquerade</h1>
+        <p class="header-subtitle">L'Appel des Élus</p>
+        <p class="header-date">25 Janvier 2026 • 19h00</p>
+    </header>
+
     <div class="divider">
         <div class="divider-line"></div>
         <div class="divider-diamond"></div>
         <div class="divider-line"></div>
     </div>
 
-    <form class="rsvp-form" name="rsvp" method="POST" data-netlify="true" id="rsvpForm">
+    <form class="rsvp-form" name="rsvp" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="rsvpForm">
         <input type="hidden" name="form-name" value="rsvp">
+        <input type="hidden" name="bot-field">
         
         <div class="form-intro">
             <p>Confirmez votre présence et recevez votre invitation officielle</p>
@@ -705,7 +733,12 @@
 
         <div class="invitation-card" id="invitationCard">
             <div class="card-header">
-                <div class="card-header-ornament">🜲</div>
+                <div class="card-header-ornament">
+                    <svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 5 L65 30 L95 30 L72 48 L80 75 L50 58 L20 75 L28 48 L5 30 L35 30 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <path d="M50 20 L58 35 L75 35 L62 45 L67 62 L50 52 L33 62 L38 45 L25 35 L42 35 Z"/>
+                    </svg>
+                </div>
                 <div class="card-event-title">Old Money Masquerade</div>
                 <div class="card-event-sub">Bal des Secrets</div>
             </div>
@@ -804,34 +837,45 @@
         ctx.lineWidth = 1;
         ctx.strokeRect(16, 16, width - 32, height - 32);
 
-        // Header ornament
+        // Header ornament (star shape)
         ctx.fillStyle = '#b8956e';
-        ctx.font = '36px serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('🜲', width/2, 70);
+        ctx.beginPath();
+        ctx.moveTo(width/2, 40);
+        ctx.lineTo(width/2 + 10, 60);
+        ctx.lineTo(width/2 + 30, 60);
+        ctx.lineTo(width/2 + 15, 75);
+        ctx.lineTo(width/2 + 22, 95);
+        ctx.lineTo(width/2, 82);
+        ctx.lineTo(width/2 - 22, 95);
+        ctx.lineTo(width/2 - 15, 75);
+        ctx.lineTo(width/2 - 30, 60);
+        ctx.lineTo(width/2 - 10, 60);
+        ctx.closePath();
+        ctx.fill();
 
         // Event title
         ctx.fillStyle = '#b8956e';
         ctx.font = '600 22px Cinzel, serif';
-        ctx.fillText('OLD MONEY MASQUERADE', width/2, 115);
+        ctx.textAlign = 'center';
+        ctx.fillText('OLD MONEY MASQUERADE', width/2, 135);
 
         // Subtitle
         ctx.fillStyle = '#8b3a44';
         ctx.font = '14px Cinzel, serif';
-        ctx.fillText('Bal des Secrets', width/2, 140);
+        ctx.fillText('Bal des Secrets', width/2, 160);
 
         // Divider
         ctx.strokeStyle = '#b8956e';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(width/2 - 80, 170);
-        ctx.lineTo(width/2 + 80, 170);
+        ctx.moveTo(width/2 - 80, 190);
+        ctx.lineTo(width/2 + 80, 190);
         ctx.stroke();
 
         // Diamond
         ctx.fillStyle = '#b8956e';
         ctx.save();
-        ctx.translate(width/2, 170);
+        ctx.translate(width/2, 190);
         ctx.rotate(Math.PI/4);
         ctx.fillRect(-4, -4, 8, 8);
         ctx.restore();
@@ -839,62 +883,67 @@
         // Invitation text
         ctx.fillStyle = 'rgba(245, 239, 230, 0.5)';
         ctx.font = 'italic 18px Cormorant Garamond, serif';
-        ctx.fillText('Invitation officielle', width/2, 250);
+        ctx.fillText('Invitation officielle', width/2, 270);
 
         // Title
         ctx.fillStyle = '#b8956e';
         ctx.font = '28px Cinzel Decorative, serif';
-        ctx.fillText(cardTitle.textContent, width/2, 310);
+        ctx.fillText(cardTitle.textContent, width/2, 330);
 
         // Name
         ctx.fillStyle = '#f5efe6';
         ctx.font = '600 38px Cinzel, serif';
-        ctx.fillText(cardName.textContent, width/2, 370);
+        ctx.fillText(cardName.textContent, width/2, 390);
 
         // Divider
         ctx.strokeStyle = 'rgba(184, 149, 110, 0.4)';
         ctx.beginPath();
-        ctx.moveTo(width/2 - 60, 405);
-        ctx.lineTo(width/2 + 60, 405);
+        ctx.moveTo(width/2 - 60, 425);
+        ctx.lineTo(width/2 + 60, 425);
         ctx.stroke();
 
         // Invited text
         ctx.fillStyle = 'rgba(245, 239, 230, 0.6)';
         ctx.font = 'italic 20px Cormorant Garamond, serif';
-        ctx.fillText(cardInvited.textContent, width/2, 450);
+        ctx.fillText(cardInvited.textContent, width/2, 470);
 
         // Date
         ctx.fillStyle = '#f5efe6';
         ctx.font = '22px Cinzel, serif';
-        ctx.fillText('25 Janvier 2026', width/2, 540);
+        ctx.fillText('25 Janvier 2026', width/2, 560);
 
         // Time
         ctx.fillStyle = '#b8956e';
         ctx.font = '18px Cormorant Garamond, serif';
-        ctx.fillText('À partir de 19h00', width/2, 575);
+        ctx.fillText('À partir de 19h00', width/2, 595);
 
         // Address
         ctx.fillStyle = 'rgba(245, 239, 230, 0.5)';
         ctx.font = 'italic 16px Cormorant Garamond, serif';
-        ctx.fillText('9 Rue Marquis de Pienne', width/2, 610);
+        ctx.fillText('9 Rue Marquis de Pienne', width/2, 630);
 
         // Bottom divider
         ctx.strokeStyle = 'rgba(184, 149, 110, 0.2)';
         ctx.beginPath();
-        ctx.moveTo(width/2 - 120, 660);
-        ctx.lineTo(width/2 + 120, 660);
+        ctx.moveTo(width/2 - 120, 680);
+        ctx.lineTo(width/2 + 120, 680);
         ctx.stroke();
 
         // Quote
         ctx.fillStyle = 'rgba(184, 149, 110, 0.5)';
         ctx.font = 'italic 14px Cormorant Garamond, serif';
-        ctx.fillText('"Que les masques dissimulent', width/2, 710);
-        ctx.fillText('ce que les yeux révèlent"', width/2, 730);
+        ctx.fillText('"Que les masques dissimulent', width/2, 720);
+        ctx.fillText('ce que les yeux révèlent"', width/2, 740);
 
         // Bottom ornament
-        ctx.fillStyle = 'rgba(184, 149, 110, 0.3)';
-        ctx.font = '18px serif';
-        ctx.fillText('⚜', width/2, 770);
+        ctx.fillStyle = 'rgba(184, 149, 110, 0.4)';
+        ctx.beginPath();
+        ctx.moveTo(width/2, 765);
+        ctx.lineTo(width/2 + 6, 775);
+        ctx.lineTo(width/2, 785);
+        ctx.lineTo(width/2 - 6, 775);
+        ctx.closePath();
+        ctx.fill();
 
         // Download
         const link = document.createElement('a');
